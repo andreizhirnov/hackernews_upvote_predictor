@@ -1,14 +1,17 @@
 from psycopg2 import connect, sql
 from dotenv import load_dotenv
-from os import getenv
+import os
+import pandas as pd
+
+os.chdir("C:/Users/andre/Dropbox/MLX/week 1/hackernews_upvote_predictor")
 
 load_dotenv()
 
-POSTGRES_PASSWORD = getenv('POSTGRES_PASSWORD')
-POSTGRES_USERNAME = getenv('POSTGRES_USERNAME')
-DB_HOST = getenv('DB_HOST')
-DB_PORT = getenv('DB_PORT')
-DB_NAME = getenv('DB_NAME')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+POSTGRES_USERNAME = os.getenv('POSTGRES_USERNAME')
+DB_HOST = os.getenv('DB_HOST')
+DB_PORT = os.getenv('DB_PORT')
+DB_NAME = os.getenv('DB_NAME')
 
 def connect_to_db():
     conn = connect(
@@ -23,15 +26,24 @@ def close_db_connection(conn):
 # Data has COLUMNS: id, dead, type, by, time, text, parent, kids, url, score, title, descandants 
 
 # 1. EXTRACT id, by, title, score, url -- FILTER where title exists
-def filter_records():
+def fetch_subs():
     conn =  connect_to_db()
     cur = conn.cursor()
-    cur.execute("SELECT id, by, title, score, url FROM hacker_news.items WHERE type='story' AND title IS NOT NULL LIMIT 3;")
+    cur.execute("SELECT i.id, i.by, i.title, i.score, i.url, i.time, u.created as user_created, u.karma as user_karma FROM hacker_news.items i inner join hacker_news.users u on i.by=u.id WHERE i.type='story' AND i.title IS NOT NULL LIMIT 100000;")
     records = cur.fetchall()
     close_db_connection(conn)
     return records
 
+def fetch_users():
+    conn =  connect_to_db()
+    cur = conn.cursor()
+    cur.execute("SELECT id, created FROM hacker_news.users LIMIT 10000;")
+    records = cur.fetchall()
+    close_db_connection(conn)
+    return records 
 
-print(filter_records())
+df_subs = pd.DataFrame(fetch_subs(), columns = ['id','by','title','score','url','time','user_created','user_karma']) 
+df_subs.head()
+df_subs.info()
 
-
+df_subs.to_parquet("data/submissions.parquet.gzip", compression='gzip')  
