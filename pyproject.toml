@@ -1,21 +1,23 @@
 [project]
-name = "hackernewsupvotepredictor"
-version = "0.0.1"
-description = "MLX week one - Hacker News Upvote Predictor"
-authors = [
-    {name = "Helen Zhou"}
-]
-license = {text = "MIT License"}
+name = "hackernews-upvote-predictor"
+version = "0.1.0"
+description = "Add your description here"
 readme = "README.md"
-requires-python = "=3.9.6"
+requires-python = ">=3.13"
 dependencies = [
-    "python-dotenv (>=1.1.0,<2.0.0)",
-    "psycopg2-binary (>=2.9.10,<3.0.0)",
+    "datasets>=3.6.0",
+    "fastapi>=0.115.12",
+    "huggingface-hub>=0.33.0",
+    "matplotlib>=3.10.3",
+    "pandas>=2.3.0",
+    "psycopg2-binary>=2.9.10",
+    "pyarrow>=20.0.0",
+    "python-dotenv>=1.1.0",
+    "scipy>=1.15.3",
+    "torch>=2.7.1",
+    "torchmetrics>=1.7.2",
+    "uvicorn>=0.34.3",
+    "wandb>=0.20.1",
 ]
-
-[tool.poetry]
-name = "hackernewsupvotepredictor"
-
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.uv]
+package = true
